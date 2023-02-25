@@ -1,4 +1,5 @@
 require('dotenv').config()
+const { ObjectId } = require('mongodb')
 const express = require('express')
 const app = express()
 const PORT = process.env.PORT || 3000;  
@@ -17,7 +18,7 @@ async function cxnDB(){
 
   try{
     client.connect; 
-    const collection = client.db("chillAppz").collection("drinkz");
+    const collection = client.db("test").collection("testC");
     // const collection = client.db("papa").collection("dev-profiles");
     const result = await collection.find().toArray();
     //const result = await collection.findOne(); 
@@ -33,12 +34,34 @@ async function cxnDB(){
 }
 
 
-app.get('/', (req, res) => {
-  //res.send('Hello World This is Barry 3! <br/> <a href="mongo">mongo</a>');
+app.get('/', async (req, res) => {
 
-  res.render('index'); 
+  let result = await cxnDB().catch(console.error); 
+
+  // console.log("get/: ", result);
+
+  res.render('index', {  animalData : result })
+})
+
+//CREATE
+
+app.get('/create', async (req, res) => {
+
+  //get data from the form 
+
+  console.log("in get to slash update:", req.query.ejsFormName); 
+  animal_input = req.query.ejsFormName; 
+
+  //update in the database. 
+  client.connect; 
+  const collection = client.db("test").collection("testC");
+  await collection.insertOne({ 
+    animal: animal_input
+})
 
 })
+
+//READ
 
 app.get('/mongo', async (req, res) => {
 
@@ -46,27 +69,59 @@ app.get('/mongo', async (req, res) => {
 
   let result = await cxnDB().catch(console.error); 
 
-  console.log('in get to slash mongo', result[1].drink_name); 
+  console.log('in get to slash mongo', result[1].animal_name); 
 
-  res.send(`here ya go, joe. ${ result[1].drink_name }` ); 
+  res.send(`here ya go, joe. ${ result[1].animal_name }` ); 
+
+})
+
+//UPDATE
+
+app.post('/updateAnimal/:id', async (req, res) => {
+
+  try {
+    console.log("req.parms.id: ", req.params.id) 
+    
+    client.connect; 
+    const collection = client.db("test").collection("testC");
+    let result = await collection.findOneAndUpdate(
+      {"_id": new ObjectId(req.params.id)}, {$set:{animal : "NewAnimal"}})
+    .then(result => {
+      console.log(result); 
+      res.redirect('/');
+    })
+    .catch(error => console.error(error))
+  }
+  finally{
+    //client.close()
+  }
 
 })
 
-app.get('/update', async (req, res) => {
+// DELETE
 
-  //get data from the form 
+app.post('/deleteAnimal/:id', async (req, res) => {
 
-  console.log("in get to slash update:", req.query.ejsFormName); 
-  myName = req.query.ejsFormName; 
+  try {
+    console.log("req.parms.id: ", req.params.id) 
+    
+    client.connect; 
+    const collection = client.db("test").collection("testC");
+    let result = await collection.findOneAndDelete( 
+      {"_id": new ObjectId(req.params.id)}, {$set:{animal : ""}})
+    
+    .then(result => {
+      console.log(result); 
+      res.redirect('/');
+    })
+    .catch(error => console.error(error))
+  }
+  finally{
+    //client.close()
+  }
 
-  //update in the database. 
-  client.connect; 
-  const collection = client.db("chillAppz").collection("drinkz");
-  await collection.insertOne({ 
-    drink_name: "coldiessss"
 })
 
-})
 
 console.log('in the node console');
 
