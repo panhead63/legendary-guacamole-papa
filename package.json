@@ -22,12 +22,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/barrycumbie/miniature-octo-adventure-mike.git"
+    "url": "https://github.com/panhead63/legendary-guacamole-papa.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/barrycumbie/miniature-octo-adventure-mike/issues"
+    "url": "https://github.com/panhead63/legendary-guacamole-papa/issues"
   },
-  "homepage": "https://github.com/barrycumbie/miniature-octo-adventure-mike#readme"
+  "homepage": "https://github.com/panhead63/legendary-guacamole-papa/blob/main/README.md
+"
 }
